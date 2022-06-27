@@ -31,7 +31,7 @@ connect_to_db <- function(POSTGRES_HOST = NULL,
 
   while( n <= n_connection_tries) {
 
-    message(glue::glue("Trying to connect: try {n}"))
+    message(glue::glue("Trying to connect: attempt {n}"))
 
     connection <- try({
       DBI::dbConnect(RPostgres::Postgres(),
@@ -44,7 +44,7 @@ connect_to_db <- function(POSTGRES_HOST = NULL,
     })
 
     if (inherits(connection, "PqConnection")) {
-
+      message("Success!")
       return(connection)
 
     } else {

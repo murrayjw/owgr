@@ -19,10 +19,10 @@ get_current_owgr <- function() {
   ranking_table_node <- rvest::html_node(owgr_html,
                                     "#ranking_table")
 
-  current_week <- rvest::html_nodes(ranking_table_node, "h2") %>%
+  current_w <- rvest::html_nodes(ranking_table_node, "h2") %>%
     rvest::html_text()
 
-  current_date <-  rvest::html_node(ranking_table_node, "time") %>%
+  current_d <-  rvest::html_node(ranking_table_node, "time") %>%
     rvest::html_text()
 
   player_frame <- .create_player_frame(ranking_table_node)
@@ -34,7 +34,10 @@ get_current_owgr <- function() {
     dplyr::select(-dplyr::contains("name"))
 
   owgr_data <- player_frame %>%
-    dplyr::bind_cols(owgr_table)
+    dplyr::bind_cols(owgr_table) %>%
+    dplyr::mutate(current_week = current_w,
+                  current_date = lubridate::dmy(current_d))
+
 
   return(owgr_data)
 }
@@ -86,7 +89,7 @@ get_current_owgr <- function() {
     player_name = pn,
     player_link = pl
   ) %>%
-    filter(grepl('/en/', player_link))
+    dplyr::filter(grepl('/en/', player_link))
 
   return(player_data)
 }
